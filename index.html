@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Prompts</title>
+</head>
+
+<body>
+  <div class="app">
+    <button class="icon-button open-toggle" id="btn-open">
+      <img src="assets/open.svg" alt="Abrir Menu" class="icon" />
+    </button>
+
+    <aside class="sidebar">
+      <header class="sidebar-header">
+        <img src="assets/logo.svg" alt="Logo" class="logo" />
+        <button class="icon-button" id="btn-collapse">
+          <img src="assets/collapse.svg" alt="Fechar Menu" class="icon" />
+        </button>
+      </header>
+
+      <div class="sidebar-content">
+        <div class="search-container">
+          <img src="assets/search.svg" alt="Buscar" class="icon search-icon" />
+          <input type="text" class="search-input" id="search-input" placeholder="Buscar por título" />
+          <button class="btn-primary btn btn-full" id="btn-new">Novo prompt</button>
+        </div>
+
+        <ul class="prompt-list" id="prompt-list"></ul>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="main-header">
+        <button id="btn-copy" class="btn-outline btn">
+          <img src="assets/copy.svg" alt="Copiar" class="icon" />
+          <span>Copiar</span>
+        </button>
+        <button id="btn-save" class="btn-primary btn w-150">Salvar</button>
+      </header>
+
+      <div data-placeholder="Título do prompt" class="editable-wrapper is-empty" id="title-wrapper">
+        <h1 id="prompt-title" class="prompt-title" contenteditable="true"></h1>
+      </div>
+
+      <div data-placeholder="Conteúdo do prompt ..." class="editable-wrapper is-empty" id="content-wrapper">
+        <div id="prompt-content" class="prompt-content" contenteditable="true"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
