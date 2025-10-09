@@ -1,8 +1,12 @@
 :root {
   --white: #ffffff;
+
   --accent-600: #4863f7;
   --accent-500: #7878d7;
+
   --alert-600: #ff5c5c;
+  --alert-800: rgba(255, 92, 92, 0.08);
+
   --gray-900: #0d0d0d;
   --gray-800: #111111;
   --gray-700: #1a1a1a;
@@ -16,14 +20,14 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  scroll-behavior: smooth;
-}
-
 ::-webkit-scrollbar {
   width: 8px;
 }
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
 ::-webkit-scrollbar-thumb {
   background-color: var(--gray-100);
 }
@@ -39,22 +43,51 @@ body {
   color: var(--white);
 }
 
+/* ====== LAYOUT PRINCIPAL ====== */
 .app {
   display: flex;
   height: 100vh;
   width: 100vw;
+  overflow: hidden; /* evita empilhamento quando sidebar anima */
 }
 
-/* ---------- MAIN ---------- */
-.main {
+/* Sidebar fixa à esquerda */
+.sidebar {
+  flex-shrink: 0;
+  width: 350px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--gray-800);
+  border-right: 1px solid var(--gray-700);
+  transition: transform 0.28s ease, opacity 0.28s ease;
+  transform: translateX(0);
+  opacity: 1;
+  z-index: 10;
+}
+
+/* Estados da sidebar */
+.sidebar.open {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.sidebar.collapsed {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* Área principal preenche o restante */
+.main {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   padding: 62px 124px;
   gap: 32px;
   overflow-y: auto;
 }
 
+/* Cabeçalho da main (botões no canto direito) */
 .main-header {
   display: flex;
   justify-content: flex-end;
@@ -63,7 +96,7 @@ body {
   width: 100%;
 }
 
-/* ---------- BUTTONS ---------- */
+/* ====== BOTÕES ====== */
 .btn {
   gap: 10px;
   height: 44px;
@@ -73,7 +106,6 @@ body {
   font-size: 14px;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
 .btn-outline {
@@ -81,10 +113,17 @@ body {
   border: 0.5px solid var(--gray-200);
   color: var(--white);
   padding: 0 16px;
+  transition: background-color 0.2s;
 }
 
 .btn-outline:hover {
-  background: var(--gray-200);
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 .btn-primary {
@@ -92,10 +131,11 @@ body {
   border: 1px solid var(--accent-500);
   color: var(--white);
   padding: 0 24px;
+  transition: opacity 0.2s;
 }
 
 .btn-primary:hover {
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .w-150 {
@@ -103,7 +143,7 @@ body {
   justify-content: center;
 }
 
-/* ---------- TEXT AREAS ---------- */
+/* ====== TÍTULO e CONTEÚDO EDITÁVEIS ====== */
 .prompt-title {
   font-weight: 600;
   font-size: 32px;
@@ -126,70 +166,67 @@ body {
   position: absolute;
   color: var(--gray-200);
   pointer-events: none;
+  opacity: 0;
+}
+
+.editable-wrapper.is-empty::before {
   opacity: 1;
 }
 
-.editable-wrapper:not(.is-empty)::before {
-  opacity: 0;
+#title-wrapper.is-empty {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--gray-200);
 }
 
-/* ---------- ICONS ---------- */
-.icon {
-  width: 20px;
-  height: 20px;
+#content-wrapper.is-empty {
+  font-size: 16px;
+  color: var(--gray-200);
+  line-height: 32px;
 }
 
+/* ====== BOTÕES ICON ====== */
 .icon-button {
   padding: 0;
   border: none;
-  background-color: transparent;
+  background: transparent;
   cursor: pointer;
 }
 
-/* ---------- OPEN BUTTON ---------- */
+/* botão abrir (posicionado fixo fora do fluxo) */
 .open-toggle {
-  position: none;
-  top: 24px;
-  z-index: 1200;
-  background: var(--gray-800);
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-}
-
-/* ---------- SIDEBAR ---------- */
-.sidebar {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 400px;
-  height: 100vh;
+  top: 24px;
+  left: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 60;
+  display: none; /* mostrado apenas quando necessário (mobile ou sidebar.collapsed) */
+}
+
+/* Mostrar botão quando a sidebar estiver colapsada (sibling geral) */
+.sidebar.collapsed ~ .open-toggle {
   display: flex;
-  flex-direction: column;
-
-  padding: 32px;
-  background-color: var(--gray-800);
-  border-right: 0.5px solid var(--gray-700);
-  transition: transform 0.3s ease, opacity 0.3s;
-  z-index: 1000;
+  align-items: center;
+  justify-content: center;
 }
 
-.sidebar.collapsed {
-  transform: translateX(-100%);
-  opacity: 0;
-}
-
+/* ====== SIDEBAR INTERNA ====== */
 .sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 24px;
 }
 
 .sidebar-content {
   display: flex;
   flex-direction: column;
+  padding: 0 24px 24px 24px;
 }
 
-/* ---------- SEARCH ---------- */
+/* Search */
 .search-container {
   display: flex;
   flex-direction: column;
@@ -203,7 +240,7 @@ body {
 .search-icon {
   position: absolute;
   left: 16px;
-  top: 50%;
+  top: 22px;
   transform: translateY(-50%);
 }
 
@@ -223,22 +260,40 @@ body {
   color: var(--gray-200);
 }
 
-/* ---------- PROMPT LIST ---------- */
+.btn-full {
+  width: 100%;
+  justify-content: center;
+}
+
+.logo {
+  height: 24px;
+}
+
+/* Prompt list item */
+.prompt-list {
+  list-style: none;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .prompt-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   cursor: pointer;
-  margin-top: 20px;
+  padding: 8px 6px;
+  border-radius: 6px;
 }
 
 .prompt-item-content {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  flex: 1;
   min-width: 0;
+  flex: 1;
 }
 
 .prompt-item-title {
@@ -246,59 +301,74 @@ body {
   font-size: 14px;
   color: var(--white);
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .prompt-item-description {
   font-size: 12px;
-  color: var(--gray-100);
+  color: var(--gray-200);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+/* botão icone remover */
 .btn-icon {
-  background: none;
+  background: transparent;
   border: none;
-  padding: 0;
+  padding: 6px;
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  transition: background 0.2s;
+  transition: background 0.12s ease;
   height: 32px;
   width: 32px;
 }
 
 .btn-icon:hover {
-  background: var(--alert-600);
+  background: rgba(255, 255, 255, 0.04);
 }
 
-/* Oculta o botão de abrir quando a sidebar estiver aberta */
-.sidebar.open {
-  display: none;
+.icon-trash {
+  fill: #fff; /* cor base branca para SVG */
+  filter: drop-shadow(0 0 15px #0ff) drop-shadow(0 0 25px #0ff)
+    drop-shadow(0 0 35px #0ff);
+  transition: all 0.1s ease;
+  cursor: pointer;
 }
 
-/* Esconde botão de remover por padrão */
-.prompt-item .btn-icon {
-  transform: translateX(0);
+.icon-trash:hover {
+  fill: #0ff; /* muda para ciano */
+  filter: drop-shadow(0 0 5px #0ff) drop-shadow(0 0 8px #0ff)
+    drop-shadow(0 0 12px #0ff) drop-shadow(0 0 40px #0ff);
 }
 
-/* Mostra botão de remover ao passar o mouse sobre o item */
-.prompt-item:hover .btn-icon {
-  display: flex;
+/* RESPONSIVO */
+@media (max-width: 1024px) {
+  .main {
+    padding: 48px 32px;
+  }
 }
 
-.logo {
-  height: 24px;
-}
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translateX(-100%);
+    opacity: 0;
+    width: 300px;
+  }
 
-@media (max-width: 950px) {
+  .sidebar.open {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
   .open-toggle {
-    display: block;
-    z-index: 0;
-    top: 38px;
+    display: flex;
   }
 }
