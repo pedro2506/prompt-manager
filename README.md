@@ -41,8 +41,8 @@ prompt-manager/
 ├── copy.svg
 ├── favicon.svg
 ├── search.svg
-├── preview-desktop.png
-└── preview-mobile.png
+├── preview.png
+
 
 
 
