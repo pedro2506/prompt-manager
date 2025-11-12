@@ -1,244 +1,89 @@
-// Chave para identificar os dados salvos pela nossa aplicação no navegador.
-const STORAGE_KEY = "prompts_storage"
+// Seletores principais
+const titleInput = document.getElementById("promptTitle");
+const textArea = document.getElementById("promptText");
+const saveBtn = document.getElementById("savePromptBtn");
+const copyBtn = document.getElementById("copyPromptBtn");
+const newBtn = document.getElementById("newPromptBtn");
+const removeBtn = document.getElementById("removePromptBtn");
+const promptList = document.getElementById("promptList");
 
-// Estado carregar os prompts salvos e exibir.
-const state = {
-  prompts: [],
-  selectedId: null,
-}
+let prompts = JSON.parse(localStorage.getItem("prompts")) || [];
+let currentIndex = null;
 
-// Seletores dos elementos HTML por ID
-const elements = {
-  promptTitle: document.getElementById("prompt-title"),
-  promptContent: document.getElementById("prompt-content"),
-  titleWrapper: document.getElementById("title-wrapper"),
-  contentWrapper: document.getElementById("content-wrapper"),
-  btnOpen: document.getElementById("btn-open"),
-  btnCollapse: document.getElementById("btn-collapse"),
-  sidebar: document.querySelector(".sidebar"),
-  btnSave: document.getElementById("btn-save"),
-  list: document.getElementById("prompt-list"),
-  search: document.getElementById("search-input"),
-  btnNew: document.getElementById("btn-new"),
-  btnCopy: document.getElementById("btn-copy"),
-}
+// Carregar lista ao abrir
+renderPrompts();
 
-// Atualiza o estado do wrapper conforme o conteúdo do elemento
-function updateEditableWrapperState(element, wrapper) {
-  const hasText = element.textContent.trim().length > 0
-  wrapper.classList.toggle("is-empty", !hasText)
-}
+// Criar novo
+newBtn.addEventListener("click", () => {
+  titleInput.value = "";
+  textArea.value = "";
+  currentIndex = null;
+});
 
-// Funções para abrir e fechar a sidebar
-function openSidebar() {
-  elements.sidebar.classList.add("open")
-  elements.sidebar.classList.remove("collapsed")
-}
+// Salvar
+saveBtn.addEventListener("click", () => {
+  const title = titleInput.value.trim();
+  const text = textArea.value.trim();
 
-function closeSidebar() {
-  elements.sidebar.classList.remove("open")
-  elements.sidebar.classList.add("collapsed")
-}
+  if (!title || !text) {
+    alert("⚠️ Preencha título e texto antes de salvar!");
+    return;
+  }
 
-function toggleSidebar() {
-  if (elements.sidebar.classList.contains("collapsed")) {
-    openSidebar()
+  const newPrompt = { title, text };
+
+  if (currentIndex !== null) {
+    prompts[currentIndex] = newPrompt;
   } else {
-    closeSidebar()
-  }
-}
-
-// Atualiza o estado de todos os elementos editáveis
-function updateAllEditableStates() {
-  updateEditableWrapperState(elements.promptTitle, elements.titleWrapper)
-  updateEditableWrapperState(elements.promptContent, elements.contentWrapper)
-}
-
-// Adiciona ouvintes de input para atualizar wrappers em tempo real
-function attachAllEditableHandlers() {
-  elements.promptTitle.addEventListener("input", function () {
-    updateEditableWrapperState(elements.promptTitle, elements.titleWrapper)
-  })
-
-  elements.promptContent.addEventListener("input", function () {
-    updateEditableWrapperState(elements.promptContent, elements.contentWrapper)
-  })
-}
-
-function save() {
-  const title = elements.promptTitle.textContent.trim()
-  const content = elements.promptContent.innerHTML.trim()
-  const hasContent = elements.promptContent.textContent.trim()
-
-  if (!title || !hasContent) {
-    alert("Título e conteúdo não podem estar vazios.")
-    return
+    prompts.push(newPrompt);
   }
 
-  if (state.selectedId) {
-    // Editando um prompt existente
-    const existingPrompt = state.prompts.find((p) => p.id === state.selectedId)
+  localStorage.setItem("prompts", JSON.stringify(prompts));
+  renderPrompts();
+  alert("✅ Prompt salvo com sucesso!");
+});
 
-    if (existingPrompt) {
-      existingPrompt.title = title || "Sem título"
-      existingPrompt.content = content || "Sem conteúdo"
-    }
-  } else {
-    // Criando um novo prompt
-    const newPrompt = {
-      id: Date.now().toString(36),
-      title,
-      content,
-    }
+// Copiar
+copyBtn.addEventListener("click", () => {
+  const text = textArea.value.trim();
+  if (!text) {
+    alert("⚠️ Nada para copiar!");
+    return;
+  }
+  navigator.clipboard.writeText(text);
+  alert("📋 Prompt copiado!");
+});
 
-    state.prompts.unshift(newPrompt)
-    state.selectedId = newPrompt.id
+// Remover
+removeBtn.addEventListener("click", () => {
+  if (currentIndex === null) {
+    alert("⚠️ Selecione um prompt para remover!");
+    return;
   }
 
-  renderList(elements.search.value)
-  persist()
-  alert("Prompt salvo com sucesso!")
+  const confirmDel = confirm("🗑️ Deseja realmente excluir este prompt?");
+  if (!confirmDel) return;
+
+  prompts.splice(currentIndex, 1);
+  localStorage.setItem("prompts", JSON.stringify(prompts));
+  renderPrompts();
+  titleInput.value = "";
+  textArea.value = "";
+  currentIndex = null;
+  alert("🗑️ Prompt removido!");
+});
+
+// Renderizar lista
+function renderPrompts() {
+  promptList.innerHTML = "";
+  prompts.forEach((p, i) => {
+    const li = document.createElement("li");
+    li.textContent = p.title;
+    li.addEventListener("click", () => {
+      titleInput.value = p.title;
+      textArea.value = p.text;
+      currentIndex = i;
+    });
+    promptList.appendChild(li);
+  });
 }
-
-function persist() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.prompts))
-  } catch (error) {
-    console.log("Erro ao salvar no localStorage:", error)
-  }
-}
-
-function load() {
-  try {
-    const storage = localStorage.getItem(STORAGE_KEY)
-    state.prompts = storage ? JSON.parse(storage) : []
-    state.selectedId = null
-  } catch (error) {
-    console.log("Erro ao carregar do localStorage:", error)
-  }
-}
-
-function createPromptItem(prompt) {
-  const tmp = document.createElement("div")
-  tmp.innerHTML = prompt.content
-  return `
-      <li class="prompt-item" data-id="${prompt.id}" data-action="select">
-        <div class="prompt-item-content">
-          <span class="prompt-item-title">${prompt.title}</span>
-          <span class="prompt-item-description">${tmp.textContent}</span>
-        </div>
-
-      <button class="btn-icon" title="Remover" data-action="remove">
-        <img src="assets/remove.svg" alt="Remover" class="icon icon-trash" />
-      </button>
-    </li>
-  `
-}
-
-function renderList(filterText = "") {
-  const filteredPrompts = state.prompts
-    .filter((prompt) =>
-      prompt.title.toLowerCase().includes(filterText.toLowerCase().trim())
-    )
-    .map((p) => createPromptItem(p))
-    .join("")
-
-  elements.list.innerHTML = filteredPrompts
-}
-
-function newPrompt() {
-  state.selectedId = null
-  elements.promptTitle.textContent = ""
-  elements.promptContent.textContent = ""
-  updateAllEditableStates()
-  elements.promptTitle.focus()
-}
-
-function copySelected() {
-  try {
-    const content = elements.promptContent
-
-    if (!navigator.clipboard) {
-      console.error("Clipboard API não suportada neste ambiente.")
-      return
-    }
-
-    navigator.clipboard.writeText(content.innerText)
-
-    alert("Conteúdo copiado para a área de transferência!")
-  } catch (error) {
-    console.log("Erro ao copiar para a área de transferência:", error)
-  }
-}
-
-// Eventos
-elements.btnSave.addEventListener("click", save)
-elements.btnNew.addEventListener("click", newPrompt)
-elements.btnCopy.addEventListener("click", copySelected)
-
-elements.search.addEventListener("input", function (event) {
-  renderList(event.target.value)
-})
-
-elements.list.addEventListener("click", function (event) {
-  const removeBtn = event.target.closest("[data-action='remove']")
-  const item = event.target.closest("[data-id]")
-
-  if (!item) return
-
-  const id = item.getAttribute("data-id")
-  state.selectedId = id
-
-  if (removeBtn) {
-    // Remover prompt.
-    state.prompts = state.prompts.filter((p) => p.id !== id)
-    renderList(elements.search.value)
-    persist()
-    return
-  }
-
-  if (event.target.closest("[data-action='select']")) {
-    const prompt = state.prompts.find((p) => p.id === id)
-
-    if (prompt) {
-      elements.promptTitle.textContent = prompt.title
-      elements.promptContent.innerHTML = prompt.content
-      updateAllEditableStates()
-    }
-  }
-})
-
-// Inicialização
-function init() {
-  load()
-  renderList("")
-  attachAllEditableHandlers()
-  updateAllEditableStates()
-
-  // Estado inicial: aberto no desktop, colapsado no mobile
-  if (window.innerWidth <= 768) {
-    elements.sidebar.classList.add("collapsed")
-    elements.sidebar.classList.remove("open")
-  } else {
-    elements.sidebar.classList.add("open")
-    elements.sidebar.classList.remove("collapsed")
-  }
-
-  // Eventos para abrir/fechar sidebar
-  elements.btnOpen.addEventListener("click", openSidebar)
-  elements.btnCollapse.addEventListener("click", toggleSidebar)
-
-  // Ajusta comportamento ao redimensionar
-  window.addEventListener("resize", function () {
-    if (window.innerWidth > 768) {
-      elements.sidebar.classList.add("open")
-      elements.sidebar.classList.remove("collapsed")
-    } else {
-      // mantém o estado atual — não forçar abrir se usuário fechou
-      // se quiser forçar comportamento diferente, altere aqui
-    }
-  })
-}
-
-// Executa a inicialização ao carregar o script
-init()

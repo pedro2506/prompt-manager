@@ -1,103 +1,45 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-    <link rel="stylesheet" href="style.css" />
-    <title>Prompts</title>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompt Manager</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="assets/favicon.svg" />
+</head>
 
-  <body>
-    <div class="app">
-      <!-- Sidebar -->
-      <aside class="sidebar">
-        <header class="sidebar-header">
-          <img src="assets/logo.svg" alt="Logo" class="logo" />
+<body>
+  <header>
+    <img src="assets/logo.svg" alt="Logo" class="logo" />
+    <h1>Prompt Manager</h1>
+  </header>
 
-          <button
-            class="icon-button"
-            id="btn-collapse"
-            aria-label="Fechar menu"
-          >
-            <img src="assets/collapse.svg" alt="Fechar Menu" class="icon" />
-          </button>
-        </header>
+  <main>
+    <section class="form-container">
+      <h2>Gerenciar Prompt</h2>
 
-        <div class="sidebar-content">
-          <div class="search-container">
-            <img
-              src="assets/search.svg"
-              alt="Buscar"
-              class="icon search-icon"
-            />
+      <input type="text" id="promptTitle" placeholder="Título do Prompt" />
 
-            <input
-              type="text"
-              class="search-input"
-              id="search-input"
-              placeholder="Buscar por título"
-            />
+      <textarea id="promptText" placeholder="Digite seu prompt aqui..."></textarea>
 
-            <button class="btn-primary btn btn-full" id="btn-new">
-              Novo prompt
-            </button>
-          </div>
+      <div class="button-group">
+        <button id="newPromptBtn" class="secondary">➕ Novo</button>
+        <button id="savePromptBtn" class="primary">💾 Salvar</button>
+        <button id="copyPromptBtn" class="info">📋 Copiar</button>
+        <button id="removePromptBtn" class="danger">🗑️ Remover</button>
+      </div>
+    </section>
 
-          <ul class="prompt-list" id="prompt-list"></ul>
-        </div>
-      </aside>
+    <section class="list-container">
+      <h2>Prompts Salvos</h2>
+      <ul id="promptList"></ul>
+    </section>
+  </main>
 
-      <!-- Botão abrir sidebar -->
-      <button
-        class="icon-button open-toggle"
-        id="btn-open"
-        aria-label="Abrir menu"
-      >
-        <img src="assets/open.svg" alt="Abrir Menu" class="icon" />
-      </button>
+  <footer>
+    <p>Desenvolvido por <strong>Pedro Miranda</strong> 💻</p>
+  </footer>
 
-      <!-- Main -->
-      <main class="main">
-        <header class="main-header">
-          <button id="btn-copy" class="btn-outline btn">
-            <img src="assets/copy.svg" alt="Copiar" class="icon" />
-            <span>Copiar</span>
-          </button>
-
-          <button id="btn-save" class="btn-primary btn w-150">Salvar</button>
-        </header>
-
-        <div
-          data-placeholder="Título do prompt"
-          class="editable-wrapper"
-          id="title-wrapper"
-        >
-          <h1
-            id="prompt-title"
-            class="prompt-title"
-            contenteditable="true"
-          ></h1>
-        </div>
-
-        <div
-          data-placeholder="Conteúdo do prompt ..."
-          class="editable-wrapper"
-          id="content-wrapper"
-        >
-          <div
-            id="prompt-content"
-            class="prompt-content"
-            contenteditable="true"
-          ></div>
-        </div>
-      </main>
-    </div>
-
-    <script src="script.js"></script>
-  </body>
+  <script src="js/script.js"></script>
+</body>
 </html>

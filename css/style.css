@@ -1,374 +1,150 @@
-:root {
-  --white: #ffffff;
-
-  --accent-600: #4863f7;
-  --accent-500: #7878d7;
-
-  --alert-600: #ff5c5c;
-  --alert-800: rgba(255, 92, 92, 0.08);
-
-  --gray-900: #0d0d0d;
-  --gray-800: #111111;
-  --gray-700: #1a1a1a;
-  --gray-200: #424242;
-  --gray-100: #737373;
-}
-
+/* Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: var(--gray-100);
-}
-
-body,
-input,
-button {
-  font-family: "Inter", sans-serif;
-}
-
+/* Fundo e fonte */
 body {
-  background-color: var(--gray-900);
-  color: var(--white);
-}
-
-/* ====== LAYOUT PRINCIPAL ====== */
-.app {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden; /* evita empilhamento quando sidebar anima */
-}
-
-/* Sidebar fixa à esquerda */
-.sidebar {
-  flex-shrink: 0;
-  width: 350px;
-  height: 100vh;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #001c3d, #003d99);
+  color: #fff;
   display: flex;
   flex-direction: column;
-  background-color: var(--gray-800);
-  border-right: 1px solid var(--gray-700);
-  transition: transform 0.28s ease, opacity 0.28s ease;
-  transform: translateX(0);
-  opacity: 1;
-  z-index: 10;
-}
-
-/* Estados da sidebar */
-.sidebar.open {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.sidebar.collapsed {
-  transform: translateX(-100%);
-  opacity: 0;
-}
-
-/* Área principal preenche o restante */
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 62px 124px;
-  gap: 32px;
-  overflow-y: auto;
-}
-
-/* Cabeçalho da main (botões no canto direito) */
-.main-header {
-  display: flex;
-  justify-content: flex-end;
   align-items: center;
-  gap: 16px;
-  width: 100%;
+  min-height: 100vh;
 }
 
-/* ====== BOTÕES ====== */
-.btn {
+/* Cabeçalho */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 10px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  font-weight: 500;
-  font-size: 14px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.btn-outline {
-  background: transparent;
-  border: 0.5px solid var(--gray-200);
-  color: var(--white);
-  padding: 0 16px;
-  transition: background-color 0.2s;
-}
-
-.btn-outline:hover {
-  background-color: rgba(255, 255, 255, 0.04);
-}
-
-.icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-}
-
-.btn-primary {
-  background: var(--accent-600);
-  border: 1px solid var(--accent-500);
-  color: var(--white);
-  padding: 0 24px;
-  transition: opacity 0.2s;
-}
-
-.btn-primary:hover {
-  opacity: 0.9;
-}
-
-.w-150 {
-  width: 150px;
-  justify-content: center;
-}
-
-/* ====== TÍTULO e CONTEÚDO EDITÁVEIS ====== */
-.prompt-title {
-  font-weight: 600;
-  font-size: 32px;
-  outline: none;
-}
-
-.prompt-content {
-  font-size: 16px;
-  color: var(--white);
-  outline: none;
-  line-height: 32px;
-}
-
-.editable-wrapper {
-  position: relative;
-}
-
-.editable-wrapper::before {
-  content: attr(data-placeholder);
-  position: absolute;
-  color: var(--gray-200);
-  pointer-events: none;
-  opacity: 0;
-}
-
-.editable-wrapper.is-empty::before {
-  opacity: 1;
-}
-
-#title-wrapper.is-empty {
-  font-size: 32px;
-  font-weight: 600;
-  color: var(--gray-200);
-}
-
-#content-wrapper.is-empty {
-  font-size: 16px;
-  color: var(--gray-200);
-  line-height: 32px;
-}
-
-/* ====== BOTÕES ICON ====== */
-.icon-button {
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-
-/* botão abrir (posicionado fixo fora do fluxo) */
-.open-toggle {
-  position: fixed;
-  top: 24px;
-  left: 24px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  z-index: 60;
-  display: none; /* mostrado apenas quando necessário (mobile ou sidebar.collapsed) */
-}
-
-/* Mostrar botão quando a sidebar estiver colapsada (sibling geral) */
-.sidebar.collapsed ~ .open-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ====== SIDEBAR INTERNA ====== */
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px;
-}
-
-.sidebar-content {
-  display: flex;
-  flex-direction: column;
-  padding: 0 24px 24px 24px;
-}
-
-/* Search */
-.search-container {
-  display: flex;
-  flex-direction: column;
+  background: rgba(255, 255, 255, 0.05);
   width: 100%;
-  position: relative;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--gray-700);
-  gap: 20px;
-}
-
-.search-icon {
-  position: absolute;
-  left: 16px;
-  top: 22px;
-  transform: translateY(-50%);
-}
-
-.search-input {
-  background: transparent;
-  height: 44px;
-  width: 100%;
-  border: 1px solid var(--gray-200);
-  outline: none;
-  color: var(--white);
-  font-size: 16px;
-  border-radius: 6px;
-  padding-left: 48px;
-}
-
-.search-input::placeholder {
-  color: var(--gray-200);
-}
-
-.btn-full {
-  width: 100%;
-  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(5px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .logo {
-  height: 24px;
+  width: 36px;
 }
 
-/* Prompt list item */
-.prompt-list {
-  list-style: none;
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* Conteúdo principal */
+main {
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
 }
 
-.prompt-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  cursor: pointer;
-  padding: 8px 6px;
-  border-radius: 6px;
+/* Formulário */
+.form-container {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  margin-bottom: 25px;
 }
 
-.prompt-item-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-  flex: 1;
+.form-container h2 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 1.4rem;
 }
 
-.prompt-item-title {
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--white);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.prompt-item-description {
-  font-size: 12px;
-  color: var(--gray-200);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* botão icone remover */
-.btn-icon {
-  background: transparent;
+input, textarea {
+  width: 100%;
+  padding: 12px;
   border: none;
-  padding: 6px;
-  border-radius: 6px;
-  cursor: pointer;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
+  outline: none;
+  transition: 0.3s;
+}
+
+input:focus, textarea:focus {
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 6px #00bfff;
+}
+
+textarea {
+  resize: none;
+  min-height: 120px;
+}
+
+/* Botões */
+.button-group {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: center;
-  transition: background 0.12s ease;
-  height: 32px;
-  width: 32px;
 }
 
-.btn-icon:hover {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.icon-trash {
-  fill: #fff; /* cor base branca para SVG */
-  filter: drop-shadow(0 0 15px #0ff) drop-shadow(0 0 25px #0ff)
-    drop-shadow(0 0 35px #0ff);
-  transition: all 0.1s ease;
+button {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  color: #fff;
   cursor: pointer;
+  font-size: 1rem;
+  transition: transform 0.2s, background 0.3s;
 }
 
-.icon-trash:hover {
-  fill: #0ff; /* muda para ciano */
-  filter: drop-shadow(0 0 5px #0ff) drop-shadow(0 0 8px #0ff)
-    drop-shadow(0 0 12px #0ff) drop-shadow(0 0 40px #0ff);
+button:hover {
+  transform: translateY(-2px);
 }
 
-/* RESPONSIVO */
-@media (max-width: 1024px) {
-  .main {
-    padding: 48px 32px;
-  }
+.primary { background: #0084ff; }
+.secondary { background: #555; }
+.info { background: #00bfa6; }
+.danger { background: #ff4d4d; }
+
+.primary:hover { background: #0071e3; }
+.secondary:hover { background: #666; }
+.info:hover { background: #00a291; }
+.danger:hover { background: #d93636; }
+
+/* Lista */
+.list-container {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
 }
 
-@media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    transform: translateX(-100%);
-    opacity: 0;
-    width: 300px;
-  }
+.list-container h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
 
-  .sidebar.open {
-    transform: translateX(0);
-    opacity: 1;
-  }
+#promptList {
+  list-style: none;
+}
 
-  .open-toggle {
-    display: flex;
-  }
+#promptList li {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#promptList li:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.02);
+}
+
+/* Rodapé */
+footer {
+  margin-top: auto;
+  padding: 15px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #ccc;
 }
