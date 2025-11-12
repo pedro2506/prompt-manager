@@ -8,10 +8,9 @@ Desenvolvido para criadores, devs e usuários que utilizam ferramentas de IA com
 ## 📸 **Preview**
 
 ### 💻 Versão Desktop
-![Preview Desktop](assets/preview-desktop.png)
+![Preview Desktop](assets/preview.png)
 
-### 📱 Versão Mobile
-![Preview Mobile](assets/preview-mobile.png)
+
 
 ---
 
@@ -51,21 +50,7 @@ prompt-manager/
 
 ## ⚙️ **Como Usar**
 
-   1. **Clone este repositório**:
- 
-   git clone https://github.com/seuusuario/prompt-manager.git
-
-   2. Acesse a pasta:
-   cd prompt-manager
-
-
-
-   3. Abra o arquivo index.html no navegador.
-
-💡 Você pode simplesmente arrastar o arquivo index.html para o seu navegador preferido
-
-
-💡 Exemplo de Uso
+  
 
 Clique em ➕ Novo para criar um novo prompt.
 
